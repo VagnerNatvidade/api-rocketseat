@@ -1,26 +1,24 @@
-// import router from express
 const { Router } = require("express");
+const multer = require("multer");
+const uploadConfig = require("../configs/upload");
 
-// import usersController
+const UserAvatarController = require("../controllers/UserAvatarController");
 const UsersController = require("../controllers/usersController");
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
 
 const usersController = new UsersController();
+const userAvatarController = new UserAvatarController();
 
-// initialize router
 const usersRoutes = Router();
+const upload = multer(uploadConfig.MULTER);
 
-// Middleware
-const myMiddleware = (req, res, next) => {
-  console.log("U passed through Middleware");
-  if (!req.body.isAdmin) {
-    return res.status(401).json({ message: "user unauthorized" });
-  }
-  next();
-};
-
-// method POST / verb HTTP POST
 usersRoutes.post("/", usersController.create);
-usersRoutes.put("/:id", usersController.update);
+usersRoutes.put("/", ensureAuthenticated, usersController.update);
+usersRoutes.patch(
+  "/avatar",
+  ensureAuthenticated,
+  upload.single("avatar"),
+  userAvatarController.update
+);
 
-// export userRoutes
 module.exports = usersRoutes;

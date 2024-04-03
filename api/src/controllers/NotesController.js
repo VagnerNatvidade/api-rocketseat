@@ -4,7 +4,7 @@ class NotesController {
   async create(req, res) {
     const { title, description, tags, links } = req.body;
 
-    const { user_id } = req.params;
+    const user_id = req.user.id;
 
     const [note_id] = await knex("notes").insert({
       title,
@@ -48,7 +48,8 @@ class NotesController {
   }
 
   async index(req, res) {
-    const { title, user_id, tags } = req.query;
+    const { title, tags } = req.query;
+    const user_id = req.user.id;
 
     let notes;
 
