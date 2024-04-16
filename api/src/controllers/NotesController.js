@@ -67,6 +67,7 @@ class NotesController {
       notes = await knex("notes")
         .where({ user_id })
         .whereLike("title", `%${title}%`)
+        .groupBy("notes.id")
         .orderBy("title");
     }
 
@@ -80,7 +81,7 @@ class NotesController {
       };
     });
 
-    return res.json({ notesWithTags });
+    return res.json(notesWithTags);
   }
 }
 
